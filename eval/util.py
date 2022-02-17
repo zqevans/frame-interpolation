@@ -16,6 +16,7 @@
 import os
 import shutil
 import subprocess
+from tqdm import tqdm
 from typing import Generator, Iterable, List
 from typing import Optional
 
@@ -114,7 +115,7 @@ def interpolate_recursively_from_files(
     The interpolated frames (including the inputs).
   """
   n = len(frames)
-  for i in range(1, n):
+  for i in tqdm(range(1, n)):
     yield from _recursive_generator(
         util.read_image(frames[i - 1]), util.read_image(frames[i]),
         times_to_interpolate, interpolator)
@@ -144,7 +145,7 @@ def interpolate_recursively_from_memory(
     The interpolated frames (including the inputs).
   """
   n = len(frames)
-  for i in range(1, n):
+  for i in tqdm(range(1, n)):
     yield from _recursive_generator(
         frames[i - 1], frames[i],
         times_to_interpolate, interpolator)

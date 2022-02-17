@@ -153,6 +153,7 @@ class ProcessDirectory(beam.DoFn):
         _output_frame(frame, idx, os.path.join(directory, 'interpolated_frames'))
         idx += 1
     if _OUTPUT_VIDEO.value:
+      # TODO: Fix this
       media.write_video(f'{directory}/interpolated.mp4', frames, fps=_FPS.value)
       logging.info('Output video saved at %s/interpolated.mp4.', directory)
 
