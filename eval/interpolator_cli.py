@@ -150,7 +150,7 @@ class ProcessDirectory(beam.DoFn):
     logging.info('Generating in-between frames for %s.', directory)
     idx = 0
     for frame in util.interpolate_recursively_from_files(input_frames, _TIMES_TO_INTERPOLATE.value, self.interpolator):
-        _output_frame([frame], idx, os.path.join(directory, 'interpolated_frames'))
+        _output_frame(frame, idx, os.path.join(directory, 'interpolated_frames'))
         idx += 1
     if _OUTPUT_VIDEO.value:
       media.write_video(f'{directory}/interpolated.mp4', frames, fps=_FPS.value)
