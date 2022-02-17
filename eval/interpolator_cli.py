@@ -105,6 +105,14 @@ _OUTPUT_VIDEO = flags.DEFINE_boolean(
 # Add other extensions, if not either.
 _INPUT_EXT = ['png', 'jpg']
 
+def _prep_frames_dir(frames_dir):
+  if tf.io.gfile.isdir(frames_dir):
+    old_frames = tf.io.gfile.glob(os.path.join(frames_dir, f'frame_*.png'))
+    if old_frames:
+      for old_frame in old_frames:
+        tf.io.gfile.remove(old_frame)
+  else:
+    tf.io.gfile.makedirs(frames_dir)
 
 def _output_frame(frame: np.ndarray, idx: int, frames_dir: str):
   """Writes PNG-images to a directory.
@@ -117,17 +125,8 @@ def _output_frame(frame: np.ndarray, idx: int, frames_dir: str):
     frames_dir: The output directory to save the images.
 
   """
-  if tf.io.gfile.isdir(frames_dir):
-    old_frames = tf.io.gfile.glob(os.path.join(frames_dir, 'frame_*.png'))
-    if old_frames:
-      logging.info('Removing existing frames from %s.', frames_dir)
-      for old_frame in old_frames:
-        tf.io.gfile.remove(old_frame)
-  else:
-    tf.io.gfile.makedirs(frames_dir)
-  
   util.write_image(os.path.join(frames_dir, f'frame_{idx:03d}.png'), frame)
-  logging.info('Output frames saved in %s.', frames_dir)
+  #logging.info('Output frames saved in %s.', frames_dir)
 
 
 class ProcessDirectory(beam.DoFn):
@@ -148,6 +147,7 @@ class ProcessDirectory(beam.DoFn):
     ]
     input_frames = functools.reduce(lambda x, y: x + y, input_frames_list)
     logging.info('Generating in-between frames for %s.', directory)
+    _prep_frames_dir('interpolated_frames')
     idx = 0
     for frame in util.interpolate_recursively_from_files(input_frames, _TIMES_TO_INTERPOLATE.value, self.interpolator):
         _output_frame(frame, idx, os.path.join(directory, 'interpolated_frames'))
