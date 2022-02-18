@@ -103,7 +103,7 @@ _OUTPUT_VIDEO = flags.DEFINE_boolean(
     'subdirectory')
 
 # Add other extensions, if not either.
-_INPUT_EXT = ['png', 'jpg']
+_INPUT_EXT = ['[Pp][Nn][Gg]', '[Jj][Pp][Gg]']
 
 def _prep_frames_dir(frames_dir):
   if tf.io.gfile.isdir(frames_dir):
